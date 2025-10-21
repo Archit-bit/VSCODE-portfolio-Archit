@@ -1,4 +1,4 @@
-import express from "express";
+/*import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -56,4 +56,4 @@ User: ${userPrompt}
 
 app.listen(5000, () =>
   console.log("✅ Local API running on http://localhost:5000")
-);
+);*/
