@@ -1,55 +1,84 @@
+// constants.ts
+import type { PortfolioFile, FileId } from "./types";
+import { MarkdownIcon, JavaScriptIcon, JsonIcon } from "./components/Icons";
 
-import type { PortfolioFile, FileId } from './types';
-import { MarkdownIcon, JavaScriptIcon, JsonIcon } from './components/Icons';
-
+/* =========================
+   ABOUT (Markdown-style)
+   ========================= */
 const ABOUT_CONTENT = `
 // Hi, I’m Archit Anurag Kaushik
-// Welcome to my interactive portfolio!
+// Welcome to my interactive VS Code-style portfolio!
 
 // --- ABOUT ME ---
-// I am an Advanced App Engineering Analyst at Accenture, specializing in Dynamics AX (X++) and C#.
-// My passion lies at the intersection of robust backend systems and visually creative, AI-integrated web experiences.
+// Advanced App Engineering Analyst @ Accenture (client: Atrias)
+// Domains: Billing, Structure, Settlement
+// Strengths: debugging, SQL optimization, clean architecture, and turning chaos into closed tickets.
 
-// --- EDUCATION ---
-// B.Tech in Electronics and Communication Engineering
-// Thapar Institute of Engineering & Technology (2018-2022)
+// --- TECH ---
+// X++, Dynamics AX 2012 R3 (AOT, Forms, TempDB, SPs)
+// SQL Server, C#, TFVC/Git
+// React + TypeScript, Node.js/Express, TailwindCSS
+// Vercel Functions, Google Cloud, OpenRouter
 
-// --- VISION ---
-// To build innovative applications that are not just functional, but also delightful to use.
-// I'm currently deepening my expertise in full-stack JavaScript development and exploring the potential of generative AI.
+// --- SIDE PROJECT ENERGY ---
+// • This VS Code Portfolio with a chatty AI assistant (hi 👋).
+// • FitDays Automation (health data → AI summaries).
+// • GymBuddy Tracker (consistency + weekly AI retros).
+// • Finance & Life Dashboard (personal analytics).
+
+// --- PHILOSOPHY ---
+// Great engineering blends logic with creativity—reliable, understandable, and a little delightful.
+// If it “works on my machine”, I ship the machine.
+
+// --- CURRENTLY ---
+// Deepening MERN + AI integration; open to global roles (Dubai/Switzerland) and interesting freelance.
 `;
 
+/* =========================
+   PROJECTS (JS look, highlighted by your editor)
+   ========================= */
 const PROJECTS_CONTENT = `
+// prettier-ignore
 const portfolio = {
   name: "Archit Anurag Kaushik",
   occupation: "Advanced App Engineering Analyst",
-  skills: ["Dynamics AX (X++)", "C#", "SQL", "JavaScript", "React", "Node.js", "Python", "TailwindCSS"],
+  skills: ["X++", "SQL Server", "C#", "React", "TypeScript", "Node.js", "TailwindCSS", "Vercel Functions", "OpenRouter"],
 };
 
+// NOTE: Yes, this looks like JS on purpose—your editor paints it nicely.
 const projects = [
   {
-    name: "This VS Code Portfolio",
-    description: "An interactive portfolio built with React and TailwindCSS to showcase my skills in a creative way.",
-    stack: ["React", "TypeScript", "TailwindCSS", "Gemini API"],
-    link: "https://github.com/your-username/your-repo" // TODO: Add your repo link
+    name: "VS Code Portfolio (this site)",
+    description: "Interactive portfolio styled like VS Code with a serverless AI assistant (OpenRouter) on Vercel.",
+    stack: ["React", "TypeScript", "TailwindCSS", "Vercel Functions", "OpenRouter API"],
+    link: "https://archit-s-vs-code-portfolio-1.vercel.app"
   },
   {
-    name: "Atrias Project @ Accenture",
-    description: "Developed and maintained modules for a large-scale ERP system using Dynamics AX and C#, improving system efficiency and user workflow.",
-    stack: ["Dynamics AX", "X++", "C#", "SQL Server"],
+    name: "FitDays Automation",
+    description: "Ingests health metrics and emails AI-generated progress summaries. If a pipeline can’t judge my sleep, who will?",
+    stack: ["Python", "Google Cloud Pub/Sub", "Gmail API", "LLM"],
     link: null
   },
   {
-    name: "AI-Powered Content Summarizer",
-    description: "A personal project exploring generative AI to summarize long articles and documents into concise points.",
-    stack: ["Python", "Node.js", "React", "Gemini API"],
-    link: "https://github.com/your-username/ai-summarizer" // TODO: Add your repo link
+    name: "GymBuddy Tracker",
+    description: "Motivational gym tracker with weekly AI retrospectives. PRs for your PRs.",
+    stack: ["React Native", "Firebase", "LLM Feedback Engine"],
+    link: null
+  },
+  {
+    name: "Finance & Life Dashboard",
+    description: "Personal analytics for expenses, habits, and journaling. Turns spreadsheets into insights faster than you can say \`VLOOKUP\`.",
+    stack: ["Python", "Google Sheets API", "Notion API", "LLM"],
+    link: null
   }
 ];
 
-// To see more, feel free to ask the AI assistant or check out my GitHub!
+// Pro tip: ask the AI assistant about any of these—it's been thoroughly briefed (and mildly sarcastic).
 `;
 
+/* =========================
+   CONTACT (JSON look, highlighted by your editor)
+   ========================= */
 const CONTACT_CONTENT = `
 {
   "name": "Archit Anurag Kaushik",
@@ -59,36 +88,47 @@ const CONTACT_CONTENT = `
     "linkedin": "https://www.linkedin.com/in/archit-anurag-kaushik",
     "twitter": "https://twitter.com/Archit_Kaushik"
   },
-  "message": "I'm always open to discussing new projects, creative ideas, or opportunities to be part of an ambitious vision. Feel free to reach out!"
+  "availability": "Open to freelance, remote, and international roles.",
+  "message": "Want to collaborate, hire me, or send a meme that compiles? My inbox is open."
 }
 `;
 
+/* =========================
+   PERSONAL CONTEXT (for AI)
+   - If you want the chatbot to use this,
+     you can import it in your API route
+     and inject into the system prompt.
+   ========================= */
+
+/* =========================
+   FILE REGISTRY FOR YOUR UI
+   ========================= */
 export const PORTFOLIO_FILES: Record<FileId, PortfolioFile> = {
-  'about.md': {
-    id: 'about.md',
-    name: 'About.md',
-    language: 'markdown',
+  "about.md": {
+    id: "about.md",
+    name: "About.md",
+    language: "markdown",
     content: ABOUT_CONTENT.trim(),
     icon: MarkdownIcon,
   },
-  'projects.js': {
-    id: 'projects.js',
-    name: 'Projects.js',
-    language: 'javascript',
+  "projects.js": {
+    id: "projects.js",
+    name: "Projects.js",
+    language: "javascript",
     content: PROJECTS_CONTENT.trim(),
     icon: JavaScriptIcon,
   },
-  'contact.json': {
-    id: 'contact.json',
-    name: 'Contact.json',
-    language: 'json',
+  "contact.json": {
+    id: "contact.json",
+    name: "Contact.json",
+    language: "json",
     content: CONTACT_CONTENT.trim(),
     icon: JsonIcon,
   },
 };
 
 export const FULL_PORTFOLIO_DATA = {
-    ABOUT_CONTENT,
-    PROJECTS_CONTENT,
-    CONTACT_CONTENT
+  ABOUT_CONTENT,
+  PROJECTS_CONTENT,
+  CONTACT_CONTENT,
 };

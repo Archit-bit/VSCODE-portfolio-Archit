@@ -1,57 +1,93 @@
 // api/ai.js
-import fs from "fs";
-import path from "path";
 import dotenv from "dotenv";
-import { PERSONAL_CONTEXT } from "../src/data/personalContext.js";
+dotenv.config();
 
-// ✅ load .env.local manually for local testing
-const envPath = path.resolve(process.cwd(), ".env.local");
-if (fs.existsSync(envPath)) dotenv.config({ path: envPath });
+// IMPORTANT: keep this as a JS file in your repo at deploy time:
+import { personalContext } from "../src/data/personalContext.js";
 
 export default async function handler(req, res) {
-  const { prompt } = req.body || {};
+  // version header so you can confirm you hit latest code
+  res.setHeader("x-bot-version", "ctx-qwen3-30b-free-v1");
 
-  if (!process.env.OPENROUTER_API_KEY) {
-    return res.status(500).json({ error: "Missing OpenRouter API key." });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey)
+    return res.status(500).json({ error: "Missing OpenRouter API key." });
+
+  // Prove the context was actually imported at runtime
+  const ctxLen =
+    typeof personalContext === "string" ? personalContext.length : -1;
+  res.setHeader("x-bot-ctx-len", String(ctxLen));
+
   try {
-    const fullPrompt = `
-You are an AI assistant inside Archit Anurag Kaushik’s interactive portfolio.
-Always answer in first person (as the portfolio assistant),
-using the personal and professional background below to guide your replies.
+    const { prompt } = req.body ?? {};
 
-${PERSONAL_CONTEXT}
+    const system = `
+You are Archit Anurag Kaushik’s portfolio assistant.
 
-User: ${prompt}
-`;
+STYLE:
+- Helpful, concise, technically confident, lightly sarcastic.
+- Sprinkle tasteful programming memes (off-by-one, "works on my machine", rubber duck debugging) when it helps.
+- Never rude or profane. If unknown, say so and propose next steps.
+
+CONTEXT (use this as ground truth about Archit):
+${personalContext}
+
+POLICY:
+- Do NOT say you lack information if the answer is derivable from CONTEXT.
+- Prefer bullet points and precise tech terms when summarizing projects/skills.
+`.trim();
 
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://archit-vs-code-portfolio.vercel.app",
+          "HTTP-Referer": "https://archit-s-vs-code-portfolio-1.vercel.app",
           "X-Title": "Archit Portfolio Chatbot",
         },
         body: JSON.stringify({
           model: "qwen/qwen3-30b-a3b:free",
           messages: [
-            { role: "system", content: "You are Archit’s AI assistant." },
-            { role: "user", content: fullPrompt },
+            {
+              role: "system",
+              content: "Follow the system instructions strictly.",
+            },
+            { role: "system", content: system },
+            {
+              role: "user",
+              content:
+                prompt || "Tell me about Archit's projects from the context.",
+            },
           ],
+          temperature: 0.6,
+          top_p: 0.9,
         }),
       }
     );
 
-    const data = await response.json();
+    const raw = await response.text();
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      return res.status(500).json({ error: "Invalid JSON from OpenRouter." });
+    }
+    if (data.error)
+      return res
+        .status(500)
+        .json({ error: data.error.message || "Provider returned error" });
+
     const text =
       data?.choices?.[0]?.message?.content ?? "No response from OpenRouter.";
     return res.status(200).json({ text });
-  } catch (error) {
-    console.error("💥 OpenRouter error:", error);
+  } catch (err) {
+    console.error("OpenRouter error:", err);
     return res.status(500).json({ error: "Failed to connect to OpenRouter." });
   }
 }

@@ -68,7 +68,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
         <div className="fixed bottom-24 right-6 w-96 h-[32rem] bg-[var(--panel)] border border-[var(--panel-border)] rounded-lg shadow-2xl flex flex-col z-50">
           <header className="p-4 border-b border-[var(--panel-border)]">
             <h2 className="font-bold text-lg">AI Assistant</h2>
-            <p className="text-xs text-[var(--muted)]">Powered by Gemini</p>
+            <p className="text-xs text-[var(--muted)]">Powered by openRouter</p>
           </header>
 
           <div className="flex-1 p-4 overflow-y-auto">
