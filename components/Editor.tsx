@@ -2,6 +2,10 @@ import React from "react";
 import type { PortfolioFile } from "../types";
 import { useTypewriter } from "../src/hooks/useTypewriter";
 
+import ContactDashboard from "./ContactDashboard";
+import AboutDashboard from "./AboutDashboard";
+import ProjectsDashboard from "./ProjectsDashboard";
+
 interface EditorProps {
   file: PortfolioFile;
 }
@@ -61,6 +65,18 @@ const SyntaxHighlighter: React.FC<{ line: string; language: string }> = ({
 
 export const Editor: React.FC<EditorProps> = ({ file }) => {
   const typedContent = useTypewriter(file.content, 5);
+
+  if (file.id === 'contact.json') {
+    return <ContactDashboard />;
+  }
+
+  if (file.id === 'about.md') {
+    return <AboutDashboard />;
+  }
+
+  if (file.id === 'projects.js') {
+    return <ProjectsDashboard />;
+  }
 
   return (
     <div className="flex-1 bg-[var(--panel)] p-6 overflow-auto text-sm md:text-base leading-loose">
